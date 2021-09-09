@@ -1,0 +1,9 @@
+---
+# defaults file for nutanix_prism_role_enable_karbon
+
+# Control debug
+global_debug: false
+wait: true
+
+# Nutanix Karbon Settings
+karbon_download_images: true

@@ -1,0 +1,10 @@
+---
+# main.yml tasks file for nutanix_prism_role_karbon_enable
+- import_tasks: enable_karbon.yml
+    - session_cookie is defined
+    - prism_type == "pc"
+    - not karbon_enabled
+- import_tasks: download_images.yml
+    - session_cookie is defined
+    - prism_type == "pc"
+    - karbon_enabled

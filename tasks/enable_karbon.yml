@@ -1,0 +1,50 @@
+---
+# enable_karbon.yml tasks file for nutanix_prism_role_karbon_enable
+- name: Enable Karbon
+  uri:
+    url: "{{ prism_api_v1 }}/genesis"
+    body:
+      value: "{\".oid\":\"ClusterManager\",\".method\":\"enable_service_with_prechecks\",\".kwargs\":{\"service_list_json\":\"{\\\"service_list\\\":[\\\"KarbonUIService\\\",\\\"KarbonCoreService\\\"]}\"}}"
+    method: POST
+    validate_certs: "{{ validate_certs }}"
+    body_format: json
+    status_code: 200
+    headers:
+      Authorization: "{{ encoded_credentials }}"
+  register: json_karbon_service_enable
+  ignore_errors: no
+
+- name: Debug | Print output from API
+  debug:
+    var: json_karbon_service_enable.json
+  when: global_debug
+
+- name: Wait for Karbon to start
+  uri:
+    url: "{{ prism_api_v1 }}/genesis"
+    body:
+      value: "{\".oid\":\"ClusterManager\",\".method\":\"is_service_enabled\",\".kwargs\":{\"service_name\":\"KarbonUIService\"}}"
+    method: POST
+    validate_certs: "{{ validate_certs }}"
+    body_format: json
+    status_code: 200
+    headers:
+      Authorization: "{{ encoded_credentials }}"
+  register: json_karbon_service_result
+  until:
+  - json_karbon_service_result.status == 200
+  - '"true" in json_karbon_service_result.json'
+  retries: 30
+  delay: 10
+  when: wait
+
+- name: Update fact karbon_enabled if sucessfull
+  set_fact:
+    karbon_enabled: true
+  when:
+    - '"true" in json_karbon_service_result.json'
+
+- name: Debug | Print fact karbon_enabled
+  debug:
+    var: karbon_enabled
+  when: global_debug
