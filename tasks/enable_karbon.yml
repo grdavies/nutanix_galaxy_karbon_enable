@@ -32,17 +32,16 @@
       Authorization: "{{ encoded_credentials }}"
   register: json_karbon_service_result
   until:
-  - json_karbon_service_result.status == 200
-  - '"true" in json_karbon_service_result.json'
+    - json_karbon_service_result.json | search("true")
   retries: 30
   delay: 10
   when: wait
 
-- name: Update fact karbon_enabled if sucessfull
+- name: Update fact karbon_enabled if successful
   set_fact:
     karbon_enabled: true
   when:
-    - '"true" in json_karbon_service_result.json'
+    - json_karbon_service_result.json | search("true")
 
 - name: Debug | Print fact karbon_enabled
   debug:

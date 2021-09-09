@@ -1,5 +1,13 @@
 ---
 # main.yml tasks file for nutanix_prism_role_karbon_enable
+- name: Import grdavies.nutanix_prism_role_init_api role
+  include_role:
+    name: grdavies.nutanix_prism_role_init_api
+    public: yes
+- name: Import grdavies.nutanix_prism_role_get_info role
+  include_role:
+    name: grdavies.nutanix_prism_role_get_info
+    public: yes
 - import_tasks: enable_karbon.yml
   when:
     - session_cookie is defined
@@ -10,3 +18,4 @@
     - session_cookie is defined
     - prism_type == "pc"
     - karbon_enabled
+    - karbon_download_images

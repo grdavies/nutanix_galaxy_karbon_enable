@@ -7,3 +7,4 @@ wait: true
 
 # Nutanix Karbon Settings
 karbon_download_images: true
+karbon_images_available: []
