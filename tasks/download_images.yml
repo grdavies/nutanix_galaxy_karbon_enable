@@ -16,7 +16,7 @@
   set_fact:
     karbon_images_missing: "{{ karbon_images_missing|default([]) + [ {'name': item.version, 'uuid': item.uuid } ] }}"
   with_items: "{{ json_karbon_image_download_list.json }}"
-  where:
+  when:
     - item.status != "Downloaded"
 
 - name: Debug | Print missing Karbon images
@@ -72,4 +72,3 @@
   debug:
     var: karbon_images_available
   when: global_debug
-
